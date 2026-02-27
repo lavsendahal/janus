@@ -1130,61 +1130,6 @@ def main(cfg: DictConfig):
         scheduler = None
 
     # =========================================================================
-    # EPOCH 0 EVALUATION (before any training)
-    # =========================================================================
-    if is_main_process():
-        print("\n" + "=" * 80)
-        print("Epoch 0 Evaluation (Before Training)")
-        print("=" * 80)
-        print("This validates that the pretrained LR baseline is loaded correctly.")
-        print("Expected Val AUC: ~0.82 (matching LR baseline)\n")
-
-    val_loss_epoch0, val_metrics_epoch0 = validate(
-        model, val_loader, criterion, device, epoch=0,
-        split="Val", use_ddp=use_ddp, disease_names=disease_names,
-        use_amp=use_amp
-    )
-
-    if is_main_process():
-        print(f"\nEpoch 0 Results (Initialization):")
-        print(f"  Val Loss:      {val_loss_epoch0:.4f}")
-        print(f"  Val Macro AUC: {val_metrics_epoch0['macro_auc']:.4f}")
-        print(f"  Val Macro AP:  {val_metrics_epoch0['macro_ap']:.4f}")
-
-        # Print per-disease metrics (epoch 0)
-        print("\n  Per-Disease Metrics:")
-        per_disease_auc = val_metrics_epoch0.get('per_disease_auc', {})
-        per_disease_ap = val_metrics_epoch0.get('per_disease_ap', {})
-        for disease in disease_names:
-            if disease in per_disease_auc and disease in per_disease_ap:
-                print(f"    {disease:30s} | AUC: {per_disease_auc[disease]:.4f} | AUPRC: {per_disease_ap[disease]:.4f}")
-
-        # Save per-disease metrics to JSONL file (epoch 0)
-        from hydra.core.hydra_config import HydraConfig
-        import json
-        hydra_cfg = HydraConfig.get()
-        output_dir = Path(hydra_cfg.runtime.output_dir)
-        metrics_file = output_dir / "per_disease_metrics.jsonl"
-        with open(metrics_file, 'a') as f:
-            for disease in disease_names:
-                if disease in per_disease_auc and disease in per_disease_ap:
-                    metric_entry = {
-                        "epoch": 0,
-                        "disease": disease,
-                        "auroc": float(per_disease_auc[disease]),
-                        "auprc": float(per_disease_ap[disease])
-                    }
-                    f.write(json.dumps(metric_entry) + '\n')
-
-        if val_metrics_epoch0['macro_auc'] < 0.75:
-            print(f"\n  ⚠️  WARNING: Epoch 0 AUC is {val_metrics_epoch0['macro_auc']:.4f}, expected ~0.82!")
-            print(f"      This suggests the pretrained LR weights are not loaded correctly.")
-        elif val_metrics_epoch0['macro_auc'] >= 0.80:
-            print(f"\n  ✓ Epoch 0 AUC is {val_metrics_epoch0['macro_auc']:.4f} - LR baseline loaded correctly!")
-
-        print("\n" + "=" * 80 + "\n")
-
-    # =========================================================================
     # Training loop
     # =========================================================================
     if is_main_process():
