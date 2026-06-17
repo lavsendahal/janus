@@ -370,7 +370,12 @@ Ensure validation dataset size is divisible by (batch_size × num_gpus) or the c
 
 If you use this code, please cite:
 ```
-Manuscript in preparation - citation will be added upon publication.
+@article{dahal2026janus,
+  title={JANUS: Anatomy-Conditioned Gating for Robust CT Triage Under Distribution Shift},
+  author={Dahal, Lavsen and Bhandari, Yubraj and Rubin, Geoffrey and Lo, Joseph Y},
+  journal={arXiv preprint arXiv:2605.13813},
+  year={2026}
+}
 ```
 
 ## License
