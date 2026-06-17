@@ -1,6 +1,6 @@
-# Janus: Neuro-Symbolic CT Disease Classification
+# Janus: CT Disease Classification
 
-Janus is a neuro-symbolic deep learning framework for multi-label disease classification from 3D abdominal CT scans. It combines visual deep learning (DINOv3 Vision Transformer) with anatomical priors and scalar radiomics features to classify 30 diseases with interpretability.
+Janus is a deep learning framework for multi-label disease classification from 3D abdominal CT scans. It combines visual deep learning (DINOv3 Vision Transformer) with anatomical priors and scalar radiomics features to classify 30 diseases with interpretability.
 
 ## Key Features
 
